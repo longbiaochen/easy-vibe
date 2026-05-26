@@ -46,6 +46,11 @@ There is no dedicated test framework in this repo. Use `npm run build` as the pr
 ## Ship-It Workflow
 
 - When the user says `ship it`, preserve unrelated dirty files and only stage the intended changes.
-- Run `npm run verify` before release. For UI/docs rendering changes, also run a local preview and verify the relevant flow in the official Codex in-app browser.
+- Run `npm run verify` before release. For UI/docs rendering changes, also run a local preview and verify unauthenticated/public rendering in the official Browser plugin; use the official Chrome plugin only when the flow depends on signed-in/default-profile state.
 - Release path is direct to the fork `main`: commit, push `origin main`, wait for `Deploy VitePress site to Pages`, then verify the fork Pages URL `https://<owner>.github.io/<repo-name>/`. If no Pages run appears within 60 seconds after push, trigger the same workflow manually with `gh workflow run deploy.yml --repo <owner>/<repo-name> --ref main`.
 - After the fork Pages preview is verified, summarize the diff against `upstream/main` and ask explicitly before creating a PR to `datawhalechina/easy-vibe`. Do not open the upstream PR without that approval.
+
+## Browser Automation Constraint
+
+- Follow the global `~/.codex/AGENTS.md` official browser/GUI policy: Browser plugin for unauthenticated local/public rendering, Chrome plugin for signed-in/default-profile browser state, and Computer Use only for native desktop boundaries.
+- Keep only repo-specific verification surfaces here; do not copy the full global policy block into this runbook.

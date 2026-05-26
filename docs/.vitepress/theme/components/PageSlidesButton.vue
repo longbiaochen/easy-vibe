@@ -368,6 +368,7 @@ const courseSidebarItems = computed(() => {
 })
 
 const hasCourseSlides = computed(() => courseSidebarItems.value.length > 1)
+const showSingleSlideButton = computed(() => hasDocContent.value && !hasCourseSlides.value)
 
 const getDocContent = () => {
   const doc = document.querySelector('.VPDoc .vp-doc')
@@ -1723,6 +1724,24 @@ const openSlides = async (mode = 'single') => {
     })
   }
 
+  if (!sourceItems.length && shouldRenderCourse) {
+    const source = getDocContent()
+    if (source) {
+      const fallbackMessage = slideSourceError.value
+        ? `课程PPT加载失败：${slideSourceError.value}，当前页演示降级展示`
+        : '课程PPT加载失败，当前页演示降级展示'
+
+      sourceItems.push({
+        source: prepareSourceForSlides(source, getRouteTitle()),
+        breadcrumbItems: slideBreadcrumb.value,
+        link: normalizeRoutePath(route.path)
+      })
+      slideSourceError.value = fallbackMessage
+    } else {
+      slideSourceError.value = slideSourceError.value || '课程PPT加载失败，当前页内容未就绪'
+    }
+  }
+
   if (!sourceItems.length) return
 
   isOpen.value = true
@@ -1858,6 +1877,7 @@ onBeforeUnmount(() => {
 <template>
   <div v-if="hasDocContent" class="ev-slides-buttons">
     <button
+      v-if="showSingleSlideButton"
       class="ev-slides-button"
       type="button"
       aria-label="打开幻灯片"
